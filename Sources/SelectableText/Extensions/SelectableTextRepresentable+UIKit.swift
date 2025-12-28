@@ -12,6 +12,7 @@ import SwiftUI
 struct SelectableTextRepresentable: UIViewRepresentable {
     var text: String? = nil
     var attributedText: NSAttributedString? = nil
+    var onWordTapped: ((String) -> Void)? = nil
     
     var maxLayoutWidth: CGFloat = .zero
     @Binding var layoutHeight: CGFloat
@@ -28,6 +29,7 @@ struct SelectableTextRepresentable: UIViewRepresentable {
         textView.textContainer.lineFragmentPadding = 0
         textView.adjustsFontForContentSizeCategory = true
         textView.maxLayoutWidth = self.maxLayoutWidth
+        textView.onWordTapped = onWordTapped
         
         if let text {
             textView.text = text
@@ -47,6 +49,10 @@ struct SelectableTextRepresentable: UIViewRepresentable {
         
         if let attributedText {
             uiView.attributedText = attributedText
+        }
+
+        if let baseTextView = uiView as? BaseTextView {
+            baseTextView.onWordTapped = onWordTapped
         }
         
         DispatchQueue.main.async {

@@ -38,6 +38,7 @@ import SwiftUI
 public struct SelectableText: View {
     private var text: String? = nil
     private var attributedText: NSAttributedString? = nil
+    private var onWordTapped: ((String) -> Void)? = nil
     
     @State private var layoutHeight: CGFloat = .zero
     
@@ -58,12 +59,22 @@ public struct SelectableText: View {
     public init(_ attributedText: NSAttributedString) {
         self.attributedText = attributedText
     }
+
+    /// Sets a callback to be invoked when a word is tapped.
+    /// - Parameter action: The callback receiving the tapped word.
+    /// - Returns: A new `SelectableText` with the callback configured.
+    public func onWordTapped(_ action: @escaping (String) -> Void) -> SelectableText {
+        var copy = self
+        copy.onWordTapped = action
+        return copy
+    }
     
     public var body: some View {
         GeometryReader { proxy in
             SelectableTextRepresentable(
                 text: text,
                 attributedText: attributedText,
+                onWordTapped: onWordTapped,
                 maxLayoutWidth: proxy.maxWidth,
                 layoutHeight: $layoutHeight
             )
@@ -94,5 +105,9 @@ public struct SelectableText: View {
         SelectableText(text)
         SelectableText(attributedText)
         SelectableText(nsAttributedText)
+        SelectableText(text)
+          .onWordTapped { word in
+            print("Word tapped: \(word)")
+          }
     }
 }
